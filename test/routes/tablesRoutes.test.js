@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
 import app from '../../src/app.js';
-import TablesService from '../../src/services/tablesService.js';
+import Table from '../../src/models/table.js';
 
 let server;
 beforeAll(() => {
@@ -30,7 +30,7 @@ describe('Testando as rotas de tables', () => {
     });
 
     it('/tables deve retornar status 500 em caso de erro no servidor', async () => {
-        jest.spyOn(TablesService, 'listTables').mockRejectedValue(new Error('DataBase error'));
+        jest.spyOn(Table, 'getTables').mockRejectedValue(new Error('DataBase error'));
 
         await request(app)
             .get('/tables')
@@ -47,7 +47,7 @@ describe('Testando as rotas de tables', () => {
     });
 
     it('/tables/:id deve retornar status 500 em caso de erro no servidor', async () => {
-        jest.spyOn(TablesService, 'listTablesById').mockRejectedValue(new Error('DetaBase error'));
+        jest.spyOn(Table, 'getTableById').mockRejectedValue(new Error('DetaBase error'));
 
         await request(app)
             .get('/tables/1')
