@@ -1,18 +1,27 @@
 import request from 'supertest';
-import { afterAll, beforeAll, describe, expect, it, jest } from '@jest/globals';
+import { afterAll, beforeAll, beforeEach, afterEach, describe, expect, it, jest } from '@jest/globals';
 import app from '../../src/app.js';
 import Table from '../../src/models/table.js';
+import db from '../../src/db/dbConfig.js';
 
 let server;
 beforeAll(() => {
     server = app.listen(4000);
 });
 
+beforeEach(async () => {
+    await db.raw('BEGIN TRANSACTION');
+});
+
+afterEach(async () => {
+    await db.raw('ROLLBACK');
+});
+
 afterAll(() => {
     server.close();
 });
 
-describe('Testando as rotas de tables', () => {
+describe('Testando as rotas GET de tables', () => {
     it('/tables deve retornar uma lista de mesas (GET)', async () => {
         await request(app)
             .get('/tables')
@@ -46,11 +55,25 @@ describe('Testando as rotas de tables', () => {
             .expect(400);
     });
 
-    it('/tables/:id deve retornar status 500 em caso de erro no servidor', async () => {
+    it('/tables/:id deve retornar status 500 em caso de erro no servidor (GET)', async () => {
         jest.spyOn(Table, 'getTableById').mockRejectedValue(new Error('DetaBase error'));
 
         await request(app)
             .get('/tables/1')
             .expect(500);
+    });
+});
+
+describe('Testando as rotas POST de tables', () => {
+    it('/tables deve criar nova mesa e retornar status 201 (POST)', async () => {
+        const tableMock = {
+            seats: 4,
+            active: true,
+        };
+
+        await request(app)
+            .post('/tables')
+            .send(tableMock)
+            .expect(201);
     });
 });

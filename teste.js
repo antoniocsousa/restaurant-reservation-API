@@ -14,4 +14,11 @@
 
 // console.log(data.toLocaleString());
 
+
+
 // import Table from "./src/models/table.js";
+// import db from "./src/db/dbConfig.js";
+
+// const table = await db.select('*').from('tables');
+
+// console.log(table);
