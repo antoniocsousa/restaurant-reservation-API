@@ -1,7 +1,8 @@
 import request from 'supertest';
-import { describe, expect, it, beforeAll, afterAll, jest } from '@jest/globals';
+import { describe, expect, it, beforeAll, afterAll, jest, beforeEach, afterEach } from '@jest/globals';
 import app from '../../src/app.js';
 import Reservation from '../../src/models/reservation.js';
+import db from '../../src/db/dbConfig.js';
 
 let server;
 beforeAll(() => {
@@ -12,7 +13,21 @@ afterAll(() => {
     server.close();
 });
 
-describe('Testando as rotas de reservations', () => {
+beforeEach(async () => {
+    await db.raw('BEGIN TRANSACTION');
+});
+
+afterEach(async () => {
+    await db.raw('ROLLBACK');
+});
+
+describe('Testes das rotas GET de reservations', () => {
+    const reservationMock = {
+        table_id: 2,
+        costumer_name: 'duda',
+        date_time: new Date().toISOString(),
+    };   
+
     it('/reservations deve retornar uma lista de reservas (GET)', async () => {
         await request(app)
             .get('/reservations')
@@ -20,7 +35,7 @@ describe('Testando as rotas de reservations', () => {
     });
 
     it('/reservations/:id deve retornar a reserva com o id passado (GET)', async () => {
-        const idMock = 1;
+        const [ idMock ] = await db('reservations').insert(reservationMock);
 
         const response = await request(app)
             .get(`/reservations/${idMock}`)
@@ -51,6 +66,87 @@ describe('Testando as rotas de reservations', () => {
 
         await request(app)
             .get('/reservations/1')
+            .expect(500);
+    });
+});
+
+describe('Testes das rotas POST de reservations', () => {
+    it('/reservations cria nova reserva e retorna status 201 (POST)', async () => {
+        const tableMock = {
+            seats: 4,
+            active: true,
+        };
+        const [ table_id ] = await db('tables').insert(tableMock);
+        const reservationMock = {
+            table_id: table_id,
+            costumer_name: 'duda',
+            date_time: new Date().toISOString(),
+        };
+
+        await request(app)
+            .post('/reservations')
+            .send(reservationMock)
+            .expect(201);
+    });
+
+    it('/reservations deve retornar status 404 se mesa da reserva não existir (POST)', async () => {
+        const tableMock = {
+            seats: 4,
+            active: true,
+        };
+        const [ table_id ] = await db('tables').insert(tableMock);
+        await db('tables').where({ id: table_id }).del();
+        const reservationMock = {
+            table_id: table_id,
+            costumer_name: 'duda',
+            date_time: new Date().toISOString(),
+        };
+        
+        const response = await request(app)
+            .post('/reservations')
+            .send(reservationMock)
+            .expect(404);
+        
+        expect(response.body).toBe('Table does not exists');
+    });
+
+    it('/reservations deve retornar status 409 se mesa estiver inativa (POST)', async () => {
+        const tableMock = {
+            seats: 4,
+            active: false,
+        };
+        const [ table_id ] = await db('tables').insert(tableMock);
+        const reservationMock = {
+            table_id: table_id,
+            costumer_name: 'duda',
+            date_time: new Date().toISOString(),
+        };
+        
+        const response = await request(app)
+            .post('/reservations')
+            .send(reservationMock)
+            .expect(409);
+        
+        expect(response.body).toBe('Table is inactive');
+    });
+
+    it('/reservations deve retornar status 500 em caso de erro no servidor', async () => {
+        const tableMock = {
+            seats: 4,
+            active: true,
+        };
+        const [ table_id ] = await db('tables').insert(tableMock);
+        const reservationMock = {
+            table_id: table_id,
+            costumer_name: 'duda',
+            date_time: new Date().toISOString(),
+        };
+
+        jest.spyOn(Reservation.prototype, 'postReservation').mockRejectedValue(new Error('Database error'));
+
+        await request(app)
+            .post('/reservations')
+            .send(reservationMock)
             .expect(500);
     });
 });

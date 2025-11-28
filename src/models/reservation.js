@@ -12,8 +12,8 @@ class Reservation {
     }
 
     static async getReservationById(id) {
-        const reservation = await db.select('*').from('reservations').where({ id });
-        return reservation[0];
+        const [ reservation ] = await db.select('*').from('reservations').where({ id });
+        return reservation;
     }
 
     async postReservation() {
@@ -23,11 +23,11 @@ class Reservation {
         return reservation;
     }
 
-    static async putReservation(reservation) {
+    static async putReservation(id, reservation) {
         await db('reservations')
             .update({...reservation})
-            .where({ id: reservation.id });
-        const [ updated ] = await db.select('*').from('reservations').where({ id: reservation.id });
+            .where({ id });
+        const [ updated ] = await db.select('*').from('reservations').where({ id });
         return updated;
     }
 

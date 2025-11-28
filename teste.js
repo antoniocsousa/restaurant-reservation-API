@@ -20,18 +20,6 @@
 // import Reservation from "./src/models/reservation.js";
 // import db from "./src/db/dbConfig.js";
 
-// const reservation = await db.select('*').from('reservations');
+// const response = await db.select('*').from('reservations');
 
-// console.log(reservation);
-
-// const modified = {
-//     id: 3,
-//     table_id: 4,
-//     costumer_name: 'duda',
-// }
-
-// await Reservation.updateReservation(modified);
-
-// const reservation2 = await db.select('*').from('reservations');
-
-// console.log(reservation2);
+// console.log(response);

@@ -14,7 +14,7 @@ describe('Testando Reservation', () => {
     const reservationMock = {
         table_id: 2,
         costumer_name: 'Antonio',
-        date_time: new Date().toLocaleString(),
+        date_time: new Date().toISOString(),
     }
     const reservation = new Reservation(reservationMock);
 
@@ -27,22 +27,22 @@ describe('Testando Reservation', () => {
     });
 
     it('Reservation.getReservationById deve retornar a reserva com o ID especificado', async () => {
-        const id = 1;
-        const response = await Reservation.getReservationById(id);
+        const [ idMock ] = await db('reservations').insert(reservationMock);
+        const response = await Reservation.getReservationById(idMock);
 
-        expect(response.id).toBe(id);
+        expect(response.id).toBe(idMock);
     });
 
-    it('Reservation.createReservation deve criar uma nova reserva', async () => {
+    it('Reservation.postReservation deve criar uma nova reserva', async () => {
         const created = await reservation.postReservation();
 
         expect(await db.select('*').from('reservations').where({ id: created.id })).toBeDefined();
     });
 
-    it('Reservation.updateReservation deve atualizar uma reserva', async () => {
+    it('Reservation.putReservation deve atualizar uma reserva', async () => {
         const [ createdId ] = await db('reservations').insert(reservationMock);
 
-        const updated = await Reservation.putReservation({ id: createdId, costumer_name: 'duda' });
+        const updated = await Reservation.putReservation(createdId, { costumer_name: 'duda' });
 
         expect(updated.costumer_name).not.toBe(reservationMock.costumer_name);
     });
