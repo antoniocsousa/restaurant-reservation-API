@@ -16,6 +16,16 @@ class Reservation {
         return reservation;
     }
 
+    static async getReservationsByDate(date) {
+        const reservations = await db.select('*').from('reservations').where('date_time', 'like', `${date}%`);
+        return reservations;
+    }
+
+    static async findByTableAndDateTime(table_id, date_time) {
+        const [ reservation ] = await db.select('*').from('reservations').where({ table_id, date_time });
+        return reservation;
+    }
+
     async postReservation() {
         const { table_id, costumer_name, date_time } = this;
         const [ created ] = await db('reservations').insert({ table_id, costumer_name, date_time });

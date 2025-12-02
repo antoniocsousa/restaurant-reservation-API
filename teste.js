@@ -12,7 +12,7 @@
 // // cria o objeto Date no fuso local
 // const data = new Date(ano, mes - 1, dia, hora, minuto);
 
-// console.log(data.toLocaleString());
+// console.log(data.toISOString());
 
 
 
@@ -20,6 +20,13 @@
 // import Reservation from "./src/models/reservation.js";
 // import db from "./src/db/dbConfig.js";
 
-// const response = await db.select('*').from('reservations');
+// const date = '2026-01-25';
 
-// console.log(response);
+// const tables = await Table.getTables();
+// const reservations = await Reservation.getReservationsByDate(date);
+
+// const reservedTableIds = reservations.map(reservation => reservation.table_id);
+
+// const available = tables.filter(table => !reservedTableIds.includes(table.id));
+
+// console.log(available);

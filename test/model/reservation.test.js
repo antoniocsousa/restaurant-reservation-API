@@ -33,6 +33,24 @@ describe('Testando Reservation', () => {
         expect(response.id).toBe(idMock);
     });
 
+    it('Reservation.getReservationByDate deve retornar a reserva com a data especificada', async () => {
+        const tableMock = {
+            seats: 4,
+            active: true,
+        };
+        const [ table_id ] = await db('tables').insert(tableMock);
+        const reservationMock = {
+            table_id: table_id,
+            costumer_name: 'duda',
+            date_time: new Date().toISOString(),
+        };
+        await db('reservations').insert(reservationMock);
+
+        const finded = await Reservation.getReservationsByDate(new Date(reservationMock.date_time).toISOString().split('T')[0]);
+
+        expect(finded[0].date_time).toBe(reservationMock.date_time);
+    });
+
     it('Reservation.postReservation deve criar uma nova reserva', async () => {
         const created = await reservation.postReservation();
 

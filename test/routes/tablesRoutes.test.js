@@ -11,6 +11,7 @@ beforeAll(() => {
 
 beforeEach(async () => {
     await db.raw('BEGIN TRANSACTION');
+    jest.restoreAllMocks();
 });
 
 afterEach(async () => {
@@ -60,6 +61,34 @@ describe('Testes das rotas GET de tables', () => {
 
         await request(app)
             .get('/tables/1')
+            .expect(500);
+    });
+
+    it('/tables/available deve retornar mesas disponiveis para determinada data e status 200', async () => {
+        const dateMock = '2026-01-25';
+
+        await request(app)
+            .get(`/tables/available?date=${dateMock}`)
+            .expect(200);
+    });
+
+    it('/tables/available deve retornar status 400 se data não estiver no formato certo', async () => {
+        const dateMock = '19/07/2005';
+
+        const response = await request(app)
+            .get(`/tables/available?date=${dateMock}`)
+            .expect(400);
+
+        expect(response.body).toBe('Invalid date format, expected YYYY-MM-DD');
+    });
+
+    it('/tables/available deve retornar status 500 em caso de erro no servidor', async () => {
+        jest.spyOn(Table, 'getTables').mockRejectedValue(new Error('Database error'));
+
+        const dateMock = '2026-01-25';
+
+        await request(app)
+            .get(`/tables/available?date=${dateMock}`)
             .expect(500);
     });
 });

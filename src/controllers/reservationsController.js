@@ -3,11 +3,22 @@ import ReservationsService from '../services/reservationsService.js';
 class ReservationsController {
     static getReservations = async (req, res) => {
         try {
-            const result = await ReservationsService.listReservations()
+            const { date } = req.query;
+            let result;
+
+            if (date) {
+                result = await ReservationsService.listReservationsByDate(date);
+            } else {
+                result = await ReservationsService.listReservations();
+            }
 
             res.status(200).json(result);
         } catch (error) {
-            res.status(500).json(error.message);
+            if (error.message === 'Invalid date format, expected YYYY-MM-DD') {
+                res.status(400).json(error.message);
+            } else {
+                res.status(500).json(error.message);
+            }
         }
     }
 
@@ -38,6 +49,10 @@ class ReservationsController {
                 res.status(404).json(error.message);
             } else if (error.message === 'Table is inactive') {
                 res.status(409).json(error.message);
+            } else if (error.message === 'The parameter "table_id" is required.' || error.message === 'The parameter "costumer_name" is required.' || error.message === 'The parameter "date_time" is required.') {
+                res.status(400).json(error.message);
+            } else if (error.message === 'The date_time must be in ISO 8601 UTC format.' || error.message === 'There is already a reservation for that time slot') {
+                res.status(400).json(error.message);
             } else {
                 res.status(500).json(error.message);
             }

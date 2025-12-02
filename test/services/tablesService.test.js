@@ -28,6 +28,14 @@ describe('Testando tablesService', () => {
             .toThrow(Error('The parameter "id" must be integer'));
     });
 
+    it('TablesService.listAvailableTables deve retornar erro se data não estiver no formato certo', async () => {
+        const dateMock = '29/07/2005';
+
+        await expect(TablesService.listAvailableTables(dateMock))
+            .rejects
+            .toThrow(Error('Invalid date format, expected YYYY-MM-DD'));
+    }); 
+
     it('createTable deve retornar mensagem de sucesso ao criar mesa', async () => {
         const tableMock = {
             seats: 4,

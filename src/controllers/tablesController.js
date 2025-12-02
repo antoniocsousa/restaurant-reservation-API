@@ -26,6 +26,21 @@ class TablesController {
         }
     }
 
+    static listAvailableTables = async (req, res) => {
+        try {
+            const { date } = req.query;
+            const result = await TablesService.listAvailableTables(date);
+
+            res.status(200).json(result);
+        } catch (error) {
+            if (error.message === 'Invalid date format, expected YYYY-MM-DD') {
+                res.status(400).json(error.message);
+            } else {
+                res.status(500).json(error.message);
+            }
+        }
+    }
+
     static createTable = async (req, res) => {
         try {
             const { body } = req;

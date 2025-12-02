@@ -5,6 +5,7 @@ const router = express.Router();
 
 router
     .get('/tables', TablesController.listTables)
+    .get('/tables/available', TablesController.listAvailableTables)
     .get('/tables/:id', TablesController.listTablesById)
     .post('/tables', TablesController.createTable)
     .patch('/tables/:id', TablesController.updateTable)

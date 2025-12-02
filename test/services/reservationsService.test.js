@@ -28,6 +28,12 @@ describe('Testando ReservationsService', () => {
             .toThrow(Error('The parameter "id" must be integer'));
     });
 
+    it('ReservationsService.listReservationsByDate deve retornar erro se data não for passada ou estiver no formato errado', async () => {
+        await expect(ReservationsService.listReservationsByDate('19/07/2005'))
+            .rejects
+            .toThrow(Error('Invalid date format, expected YYYY-MM-DD')); 
+    });
+
     it('ReservationService.createReservation deve retornar mensagem de sucesso ao criar reserva', async () => {
         const tableMock = {
             seats: 4,
@@ -80,24 +86,41 @@ describe('Testando ReservationsService', () => {
             .toThrow(Error('Table is inactive'));
     });
 
-    // it('ReservationService.createReservation deve retornar erro se data e hora coincidir com outra reserva', async () => {
-    //     const tableMock = {
-    //         seats: 4,
-    //         active: true,
-    //     };
-    //     const [ table_id ] = await db('tables').insert(tableMock);
-    //     const reservationMock = {
-    //         table_id: table_id,
-    //         costumer_name: 'duda',
-    //         date_time: new Date().toISOString(),
-    //     };
+    it('ReservationService.createReservation deve retornar erro se date_time não estiver no formato ISO', async () => {
+        const tableMock = {
+            seats: 4,
+            active: true,
+        };
+        const [ table_id ] = await db('tables').insert(tableMock);
+        const reservationMock = {
+            table_id: table_id,
+            costumer_name: 'duda',
+            date_time: "12/07/2025 19:00",
+        };
         
-    //     await ReservationsService.createReservation(reservationMock);
+        await expect(ReservationsService.createReservation(reservationMock))
+            .rejects
+            .toThrow(Error('The date_time must be in ISO 8601 UTC format.'));
+    });
 
-    //     await expect(ReservationsService.createReservation(reservationMock))
-    //         .rejects
-    //         .toThrow('');
-    // });
+    it('ReservationService.createReservation deve retornar erro se data e hora coincidir com outra reserva', async () => {
+        const tableMock = {
+            seats: 4,
+            active: true,
+        };
+        const [ table_id ] = await db('tables').insert(tableMock);
+        const reservationMock = {
+            table_id: table_id,
+            costumer_name: 'duda',
+            date_time: new Date().toISOString(),
+        };
+        
+        await ReservationsService.createReservation(reservationMock);
+
+        await expect(ReservationsService.createReservation(reservationMock))
+            .rejects
+            .toThrow(Error('There is already a reservation for that time slot'));
+    });
 
     it('ReservationService.updateReservation deve retornar mensagem de sucesso ao atualizar reserva', async () => {
         const tableMock = {

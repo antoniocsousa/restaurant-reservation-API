@@ -1,4 +1,5 @@
 import Table from '../models/table.js';
+import Reservation from '../models/reservation.js';
 
 class TablesService {
     static async listTables() {
@@ -19,6 +20,25 @@ class TablesService {
             const table = await Table.getTableById(id);
             return table;
         } catch(error) {
+            throw new Error(error.message);
+        }
+    }
+
+    static async listAvailableTables(date) {
+        try {
+            if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+                throw new Error('Invalid date format, expected YYYY-MM-DD');
+            }
+
+            const tables = await Table.getTables();
+            const reservations = await Reservation.getReservationsByDate(date);
+
+            const reservedTableIds = reservations.map(reservation => reservation.table_id);
+
+            const available = tables.filter(table => !reservedTableIds.includes(table.id));
+
+            return available;
+        } catch (error) {
             throw new Error(error.message);
         }
     }
