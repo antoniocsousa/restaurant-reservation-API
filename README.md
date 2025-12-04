@@ -155,57 +155,6 @@ Remove uma reserva.
 
 ---
 
-## 📬 Exemplos de Requests (Postman)
-
-### 🔹 Criar Reserva (POST)
-
-```
-POST http://localhost:3000/reservations
-Body (JSON):
-{
-  "table_id": 1,
-  "costumer_name": "Antônio",
-  "date_time": "2025-11-13 19:00"
-}
-```
-
-### 🔹 Listar Reservas
-
-```
-GET http://localhost:3000/reservations
-```
-
-### 🔹 Filtrar Reservas por Data
-
-```
-GET http://localhost:3000/reservations?date=2025-11-13
-```
-
-### 🔹 Criar Mesa
-
-```
-POST http://localhost:3000/tables
-Body (JSON):
-{
-  "seats": 4,
-  "active": true
-}
-```
-
-### 🔹 Buscar Mesa por ID
-
-```
-GET http://localhost:3000/tables/1
-```
-
-### 🔹 Excluir Mesa
-
-```
-DELETE http://localhost:3000/tables/1
-```
-
----
-
 ## Testes Automatizados
 
 ### Rodar todos os testes:
@@ -225,6 +174,10 @@ Os testes incluem:
 ## 📊 Cobertura de Testes
 
 ![Imagem da cobertura dos testes](./assets/coverage.png)
+Para rodar a cobertura de testes use o comando
+```
+npm run test:coverage
+```
 
 ---
 
