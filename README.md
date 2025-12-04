@@ -1,4 +1,4 @@
-# 🍕 Restaurant reservation API
+# 🍽️ Restaurant reservation API
 
 ## Visão Geral
 
