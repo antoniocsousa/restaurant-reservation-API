@@ -174,6 +174,7 @@ Os testes incluem:
 ## 📊 Cobertura de Testes
 
 ![Imagem da cobertura dos testes](./assets/coverage.png)
+
 Para rodar a cobertura de testes use o comando
 ```
 npm run test:coverage
