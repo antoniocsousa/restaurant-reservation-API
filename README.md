@@ -1,4 +1,4 @@
-# Restaurant reservation API
+# 🍕 Restaurant reservation API
 
 ## Visão Geral
 
@@ -7,7 +7,7 @@ A API implementa um CRUD completo e simula o sistema de reservas de mesas de um 
 
 ---
 
-## 🚀 Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 * Node.js
 * Express
@@ -18,7 +18,7 @@ A API implementa um CRUD completo e simula o sistema de reservas de mesas de um 
 
 ---
 
-## 📂 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 📦 Restaurant-reservation-API
@@ -36,7 +36,7 @@ A API implementa um CRUD completo e simula o sistema de reservas de mesas de um 
 
 ---
 
-## 🛠️ Configuração e Instalação
+## Configuração e Instalação
 
 ### Clonar o repositório
 
@@ -146,7 +146,7 @@ Remove uma reserva.
 
 ---
 
-## ✔️ Regras de Negócio
+## Regras de Negócio
 
 * Não é permitido criar uma reserva para um **horário já ocupado**.
 * A mesa deve existir.
@@ -171,7 +171,7 @@ Os testes incluem:
 
 ---
 
-## 📊 Cobertura de Testes
+## Cobertura de Testes
 
 ![Imagem da cobertura dos testes](./assets/coverage.png)
 
