@@ -17,7 +17,10 @@ class Reservation {
     }
 
     static async getReservationsByDate(date) {
-        const reservations = await db.select('*').from('reservations').where('date_time', 'like', `${date}%`);
+        const start = new Date(`${date} 00:00:00`).toISOString();
+        const end = new Date(`${date} 23:59:59`).toISOString();
+
+        const reservations = await db.select('*').from('reservations').whereBetween('date_time', [start, end]);
         return reservations;
     }
 
@@ -28,9 +31,8 @@ class Reservation {
 
     async postReservation() {
         const { table_id, costumer_name, date_time } = this;
-        const [ created ] = await db('reservations').insert({ table_id, costumer_name, date_time });
-        const [ reservation ] = await db.select('*').from('reservations').where({ id: created });
-        return reservation;
+        const [ created ] = await db('reservations').insert({ table_id, costumer_name, date_time }).returning('*');;
+        return created;
     }
 
     static async putReservation(id, reservation) {

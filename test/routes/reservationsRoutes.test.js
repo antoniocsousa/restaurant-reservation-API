@@ -22,12 +22,6 @@ afterEach(async () => {
 });
 
 describe('Testes das rotas GET de reservations', () => {
-    const reservationMock = {
-        table_id: 2,
-        costumer_name: 'duda',
-        date_time: new Date().toISOString(),
-    };   
-
     it('/reservations deve retornar uma lista de reservas (GET)', async () => {
         await request(app)
             .get('/reservations')
@@ -39,9 +33,9 @@ describe('Testes das rotas GET de reservations', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'daniel',
             date_time: new Date().toISOString(),
         }; 
@@ -54,13 +48,23 @@ describe('Testes das rotas GET de reservations', () => {
     });
 
     it('/reservations/:id deve retornar a reserva com o id passado (GET)', async () => {
-        const [ idMock ] = await db('reservations').insert(reservationMock);
+        const tableMock = {
+            seats: 4,
+            active: true,
+        };
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
+        const reservationMock = {
+            table_id: table.id,
+            costumer_name: 'daniel',
+            date_time: new Date().toISOString(),
+        };
+        const [ reservation ] = await db('reservations').insert(reservationMock).returning('*');
 
         const response = await request(app)
-            .get(`/reservations/${idMock}`)
+            .get(`/reservations/${reservation.id}`)
             .expect(200);
         
-        expect(response.body.id).toBe(idMock);
+        expect(response.body.id).toBe(reservation.id);
     });
 
     it('/reservations deve retornar status 400 se data estiver no formato errado', async () => {
@@ -105,9 +109,9 @@ describe('Testes das rotas POST de reservations', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: new Date().toISOString(),
         };
@@ -123,10 +127,10 @@ describe('Testes das rotas POST de reservations', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
-        await db('tables').where({ id: table_id }).del();
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
+        await db('tables').where({ id: table.id }).del();
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: new Date().toISOString(),
         };
@@ -144,9 +148,9 @@ describe('Testes das rotas POST de reservations', () => {
             seats: 4,
             active: false,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: new Date().toISOString(),
         };
@@ -178,9 +182,9 @@ describe('Testes das rotas POST de reservations', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             date_time: new Date().toISOString(),
         };   
         
@@ -197,9 +201,9 @@ describe('Testes das rotas POST de reservations', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
         };   
         
@@ -216,9 +220,9 @@ describe('Testes das rotas POST de reservations', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: '19/07/2025 19:00',
         };   
@@ -236,9 +240,9 @@ describe('Testes das rotas POST de reservations', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'daniel',
             date_time: new Date().toISOString(),
         }; 
@@ -257,9 +261,9 @@ describe('Testes das rotas POST de reservations', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: new Date().toISOString(),
         };
@@ -279,22 +283,22 @@ describe('Testes das rotas PUT de reservations', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'daniel',
             date_time: new Date().toISOString(),
         }; 
 
-        const [ id ] = await db('reservations').insert(reservationMock);
+        const [ reservation ] = await db('reservations').insert(reservationMock).returning('*');;
         const reservationUpdatedMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'antonio',
             date_time: new Date().toISOString(),
         }; 
 
         await request(app)
-            .put(`/reservations/${id}`)
+            .put(`/reservations/${reservation.id}`)
             .send(reservationUpdatedMock)
             .expect(200);
     });
@@ -304,9 +308,9 @@ describe('Testes das rotas PUT de reservations', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationUpdatedMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'antonio',
             date_time: new Date().toISOString(),
         }; 
@@ -325,16 +329,16 @@ describe('Testes das rotas PUT de reservations', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'carlos',
             date_time: new Date().toISOString(),
         }; 
 
-        const [ id ] = await db('reservations').insert(reservationMock);
+        const [ reservation ] = await db('reservations').insert(reservationMock).returning('*');
         const reservationUpdatedMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'antonio',
             date_time: new Date().toISOString(),
         }; 
@@ -342,7 +346,7 @@ describe('Testes das rotas PUT de reservations', () => {
         jest.spyOn(Reservation, 'putReservation').mockRejectedValue(new Error('Database error'));
 
         await request(app)
-            .put(`/reservations/${id}`)
+            .put(`/reservations/${reservation.id}`)
             .send(reservationUpdatedMock)
             .expect(500);
     });
@@ -354,16 +358,16 @@ describe('Testes das rotas DELETE de reservations', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: new Date().toISOString(),
         }; 
-        const [ id ] = await db('reservations').insert(reservationMock);
+        const [ reservation ] = await db('reservations').insert(reservationMock).returning('*');
 
         await request(app)
-        .delete(`/reservations/${id}`)
+        .delete(`/reservations/${reservation.id}`)
         .expect(200);
     });
 
@@ -382,18 +386,18 @@ describe('Testes das rotas DELETE de reservations', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: new Date().toISOString(),
         }; 
-        const [ id ] = await db('reservations').insert(reservationMock);
+        const [ reservation ] = await db('reservations').insert(reservationMock).returning('*');
 
         jest.spyOn(Reservation, 'deleteReservation').mockRejectedValue(new Error('Database error'));
 
         await request(app)
-            .delete(`/reservations/${id}`)
+            .delete(`/reservations/${reservation.id}`)
             .expect(500);
     });
 });

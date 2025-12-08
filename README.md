@@ -12,9 +12,8 @@ A API implementa um CRUD completo e simula o sistema de reservas de mesas de um 
 * Node.js
 * Express
 * Knex.js
-* SQLite
-* Jest
-* Supertest
+* postgreSQL + docker (para persistência dos dados)
+* Jest + Supertest (para testes automatizados)
 
 ---
 
@@ -30,6 +29,7 @@ A API implementa um CRUD completo e simula o sistema de reservas de mesas de um 
  ┃ ┗ app.js
  ┣ 📁 assets     
  ┣ 📁 tests
+ ┣ 📁 init
  ┣ README.md
  ┗ package.json
 ```
@@ -42,7 +42,7 @@ A API implementa um CRUD completo e simula o sistema de reservas de mesas de um 
 
 ```
 git clone <url-do-repo>
-cd projeto
+cd restaurant-reservation-API
 ```
 
 ### Instalar dependências
@@ -51,15 +51,11 @@ cd projeto
 npm install
 ```
 
-### Criar o banco de dados SQLite
-
-Rode o script de população:
+### Subir o banco PostgreSQL com Docker
 
 ```
-npm run populate
+docker-compose up -d
 ```
-
-Esse script executa o arquivo `populate.sql`, criando as tabelas e inserindo dados iniciais.
 
 ### Rodar a aplicação
 
@@ -83,7 +79,7 @@ http://localhost:3000
 
 Retorna todas as mesas cadastradas.
 
-#### 🔹 GET /tables?date=YYYY-MM-DD
+#### 🔹 GET /tables/available?date=YYYY-MM-DD
 
 retorna apenas mesas disponíveis naquela data (verifica reservas do dia)
 
@@ -151,7 +147,7 @@ Remove uma reserva.
 * Não é permitido criar uma reserva para um **horário já ocupado**.
 * A mesa deve existir.
 * A mesa deve estar ativa.
-* A data deve estar no formato **YYYY-MM-DD HH:mm**.
+* A data deve estar no formato **ISO**.
 
 ---
 

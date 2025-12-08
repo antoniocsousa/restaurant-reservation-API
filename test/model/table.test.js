@@ -40,16 +40,16 @@ describe('Testanto Table', () => {
     it('Table.patchTable deve ativar/desativar a mesa', async () => {
         const id = 1
         const result = await Table.patchTable(id);
-        const [ updated ] = await db.select('*').from('tables').where({ id })
+        const [ updated ] = await db.select('*').from('tables').where({ id });
 
         expect(result).toStrictEqual(updated);
     });
 
     it('Table.deleteTable deve apagar mesa do banco de dados', async () => {
-        const [ createdId ] = await db('tables').insert(tableMock);
+        const [ created ] = await db('tables').insert(tableMock).returning('*');
 
-        await Table.deleteTable(createdId);
-        const [ deleted ] = await db.select('*').from('tables').where({id: createdId})
+        await Table.deleteTable(created.id);
+        const [ deleted ] = await db.select('*').from('tables').where({id: created.id})
 
         expect(deleted).toBeUndefined();
     });

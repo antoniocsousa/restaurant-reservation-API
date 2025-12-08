@@ -20,6 +20,16 @@ describe('Testando tablesService', () => {
             .toThrow(Error());
     });
 
+    it('listTablesById deve retornar mesa com id especificado', async () => {
+        const tableMock = {
+            seats: 4,
+            active: true,
+        };
+        const [ created ] = await db('tables').insert(tableMock).returning('*');
+
+        expect(created).toEqual(expect.objectContaining(tableMock));
+    });
+
     it('listTablesById deve retornar erro se id não for passado', async () => {
         const idMock = 'test';
 
@@ -74,6 +84,18 @@ describe('Testando tablesService', () => {
         await expect(TablesService.createTable(tableMock))
             .rejects
             .toThrow(Error('invalid data'));
+    });
+
+    it('crateTable deve retornar erro se criação falhar', async () => {
+        const tableMock = {
+            seats: 4,
+            active: true,
+        };
+        jest.spyOn(Table.prototype, 'postTable').mockRejectedValue(new Error());
+
+        await expect(TablesService.createTable(tableMock))
+            .rejects
+            .toThrow(Error());
     });
 
     it('updateTable deve retornar mensagem de sucesso ao atualizar mesa', async () => {

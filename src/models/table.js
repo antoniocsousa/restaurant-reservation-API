@@ -17,9 +17,8 @@ class Table {
 
     async postTable() {
         const { seats, active } = this;
-        const [ created ] = await db('tables').insert({ seats, active });
-        const [ table ] = await db.select('*').from('tables').where({ id: created });
-        return table;
+        const [ created ] = await db('tables').insert({ seats, active }).returning('*');
+        return created;
     }
 
     static async patchTable(id) {

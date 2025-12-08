@@ -39,9 +39,9 @@ describe('Testando ReservationsService', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: new Date().toISOString(),
         };
@@ -56,10 +56,10 @@ describe('Testando ReservationsService', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
-        await db('tables').where({id: table_id}).del();
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
+        await db('tables').where({id: table.id}).del();
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: new Date().toISOString(),
         }; 
@@ -74,9 +74,9 @@ describe('Testando ReservationsService', () => {
             seats: 4,
             active: false,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: new Date().toISOString(),
         };    
@@ -91,9 +91,9 @@ describe('Testando ReservationsService', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: "12/07/2025 19:00",
         };
@@ -108,9 +108,9 @@ describe('Testando ReservationsService', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: new Date().toISOString(),
         };
@@ -127,21 +127,21 @@ describe('Testando ReservationsService', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: new Date().toISOString(),
         }; 
 
-        const [ id ] = await db('reservations').insert(reservationMock);
+        const [ reservation ] = await db('reservations').insert(reservationMock).returning('*');
         const reservationUpdatedMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'antonio',
             date_time: new Date().toISOString(),
         }; 
 
-        const response = await ReservationsService.updateReservation(id, reservationUpdatedMock)
+        const response = await ReservationsService.updateReservation(reservation.id, reservationUpdatedMock)
 
         expect(response).toEqual(expect.objectContaining({message: 'Reservation updated'}))
     });
@@ -151,9 +151,9 @@ describe('Testando ReservationsService', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');;
         const reservationUpdatedMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'antonio',
             date_time: new Date().toISOString(),
         }; 
@@ -169,15 +169,15 @@ describe('Testando ReservationsService', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: new Date().toISOString(),
         }; 
-        const [ id ] = await db('reservations').insert(reservationMock);
+        const [ reservation ] = await db('reservations').insert(reservationMock).returning('*');
 
-        const response = await ReservationsService.deleteReservation(id);
+        const response = await ReservationsService.deleteReservation(reservation.id);
 
         expect(response).toEqual(expect.objectContaining({message: 'Reservation deleted'}));
     });

@@ -27,10 +27,10 @@ describe('Testando Reservation', () => {
     });
 
     it('Reservation.getReservationById deve retornar a reserva com o ID especificado', async () => {
-        const [ idMock ] = await db('reservations').insert(reservationMock);
-        const response = await Reservation.getReservationById(idMock);
+        const [ reservation ] = await db('reservations').insert(reservationMock).returning('*');
+        const response = await Reservation.getReservationById(reservation.id);
 
-        expect(response.id).toBe(idMock);
+        expect(response.id).toBe(reservation.id);
     });
 
     it('Reservation.getReservationByDate deve retornar a reserva com a data especificada', async () => {
@@ -38,17 +38,17 @@ describe('Testando Reservation', () => {
             seats: 4,
             active: true,
         };
-        const [ table_id ] = await db('tables').insert(tableMock);
+        const [ table ] = await db('tables').insert(tableMock).returning('*');
         const reservationMock = {
-            table_id: table_id,
+            table_id: table.id,
             costumer_name: 'duda',
             date_time: new Date().toISOString(),
         };
         await db('reservations').insert(reservationMock);
 
-        const finded = await Reservation.getReservationsByDate(new Date(reservationMock.date_time).toISOString().split('T')[0]);
+        const finded = await Reservation.getReservationsByDate(reservationMock.date_time.split('T')[0]);
 
-        expect(finded[0].date_time).toBe(reservationMock.date_time);
+        expect(finded[0].date_time.toISOString().split('T')[0]).toBe(reservationMock.date_time.split('T')[0]);
     });
 
     it('Reservation.postReservation deve criar uma nova reserva', async () => {
@@ -58,18 +58,18 @@ describe('Testando Reservation', () => {
     });
 
     it('Reservation.putReservation deve atualizar uma reserva', async () => {
-        const [ createdId ] = await db('reservations').insert(reservationMock);
+        const [ created ] = await db('reservations').insert(reservationMock).returning('*');
 
-        const updated = await Reservation.putReservation(createdId, { costumer_name: 'duda' });
+        const updated = await Reservation.putReservation(created.id, { costumer_name: 'duda' });
 
         expect(updated.costumer_name).not.toBe(reservationMock.costumer_name);
     });
 
     it('Reservation.deleteReservation deve apagar uma reserva', async () => {
-        const [ createdId ] = await db('reservations').insert(reservationMock);
+        const [ created ] = await db('reservations').insert(reservationMock).returning('*');
 
-        await Reservation.deleteReservation(createdId);
-        const [ deleted ] = await db.select('*').from('reservations').where({id: createdId})
+        await Reservation.deleteReservation(created.id);
+        const [ deleted ] = await db.select('*').from('reservations').where({id: created.id})
 
         expect(deleted).toBeUndefined();
     });

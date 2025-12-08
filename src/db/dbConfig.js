@@ -1,16 +1,14 @@
 import knex from 'knex';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const db = knex({
-  client: 'sqlite3',
+  client: 'pg',
   connection: {
-    filename: path.join(__dirname, './restaurant.sqlite'),
-  },
-  useNullAsDefault: true,
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 5432,
+    user: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD || '123',
+    database: process.env.DB_NAME || 'restaurant'
+  }
 });
 
 export default db;
