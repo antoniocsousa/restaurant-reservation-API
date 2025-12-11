@@ -8,7 +8,7 @@ CREATE TABLE reservations (
   id SERIAL PRIMARY KEY,
   table_id INTEGER NOT NULL REFERENCES tables(id),
   costumer_name VARCHAR(255) NOT NULL,
-  date_time TIMESTAMP NOT NULL
+  date_time TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 INSERT INTO tables (seats, active) 
