@@ -1,0 +1,467 @@
+{
+    "openapi": "3.0.4",
+    "info": {
+        "title": "Restaurant Reservation API",
+        "description": "API para gerenciamento de reservas de restaurantes",
+        "version": "1.0"
+    },
+
+    "paths": {
+        "/tables": {
+            "get": {
+                "summary": "Retorna uma lista de mesas",
+                "tags": ["Tables"],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/table"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Cria uma nova mesa",
+                "tags": ["Tables"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/table"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Table created"
+                                        },
+                                        "content": {
+                                            "$ref": "#/components/schemas/table"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/tables/available": {
+            "get": {
+                "summary": "Retorna as mesas disponíveis para uma data específica",
+                "tags": ["Tables"],
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "description": "Data no formato YYYY-MM-DD"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/table"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid date format, expected YYYY-MM-DD"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/tables/{id}": {
+            "get": {
+                "summary": "Retorna uma mesa por ID",
+                "tags": ["Tables"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/table"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The parameter \"id\" must be integer"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Ativa/desativa uma mesa",
+                "tags": ["Tables"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Table updated"
+                                        },
+                                        "content": {
+                                            "$ref": "#/components/schemas/table"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The parameter \"id\" must be integer"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Apaga uma mesa",
+                "tags": ["Tables"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Table deleted"
+                                        },
+                                        "content": {
+                                            "$ref": "#/components/schemas/table"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The parameter \"id\" must be integer"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/reservations": {
+            "get": {
+                "summary": "Retorna uma lista de reservas",
+                "tags": ["Reservations"],
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "description": "Data no formato YYYY-MM-DD"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/reservation"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid date format, expected YYYY-MM-DD"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Cria uma nova reserva",
+                "tags": ["Reservations"],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/reservation"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Reservation created"
+                                        },
+                                        "content": {
+                                            "$ref": "#/components/schemas/reservation"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Table does not exists"
+                    },
+                    "409": {
+                        "description": "Table is inactive"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/reservations/{id}": {
+            "get": {
+                "summary": "Retorna uma reserva por ID",
+                "tags": ["Reservations"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/reservation"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The parameter \"id\" must be integer"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Atualiza uma reserva",
+                "tags": ["Reservations"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/reservation"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Reservation updated"
+                                        },
+                                        "content": {
+                                            "$ref": "#/components/schemas/reservation"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The parameter \"id\" must be integer"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Apaga uma reserva",
+                "tags": ["Reservations"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example":"Reservation deleted"
+                                        },
+                                        "content": {
+                                            "$ref": "#/components/schemas/reservation"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The parameter \"id\" must be integer"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }     
+            }
+        }
+    },
+
+    "components": {
+        "schemas": {
+            "table": {
+                "type": "object",
+                "properties": {
+                    "seats": {
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "active": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "reservation": {
+                "type": "object",
+                "properties": {
+                    "table_id": {
+                        "type": "integer"
+                    },
+                    "costumer_name": {
+                        "type": "string"
+                    },
+                    "date_time": {
+                        "type": "string"
+                    }
+                } 
+            }
+        }
+    }
+}

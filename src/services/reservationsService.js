@@ -55,6 +55,8 @@ class ReservationsService {
                 throw new Error('The date_time must be in ISO 8601 UTC format.');
             }
 
+            body.date_time = new Date(body.date_time).toISOString();
+
             if (table === undefined) {
                 throw new Error('Table does not exists');
             } else if (!table.active) {
