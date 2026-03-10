@@ -45,22 +45,16 @@ git clone <url-do-repo>
 cd restaurant-reservation-API
 ```
 
-### Instalar dependências
+### Subir a apicação com Docker
 
 ```
-npm install
+docker compose -p reservation up -d --build
 ```
 
-### Subir o banco PostgreSQL com Docker
+### Rodar o container docker
 
 ```
-docker-compose up -d
-```
-
-### Rodar a aplicação
-
-```
-npm run dev
+docker run -p 3000:3000 reservation-api
 ```
 
 A API estará disponível em:

@@ -1,7 +1,6 @@
 services:
   api:
     build: .
-    container_name: project_api
     depends_on:
       - postgres
     volumes:
