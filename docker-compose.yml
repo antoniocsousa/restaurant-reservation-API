@@ -1,6 +1,11 @@
-version: '3.9'
-
 services:
+  api:
+    build: .
+    container_name: project_api
+    depends_on:
+      - postgres
+    volumes:
+      - api_data:/app/logs
   postgres:
     image: postgres:16
     container_name: restaurant_pg
@@ -17,3 +22,4 @@ services:
 
 volumes:
   dbdata:
+  api_data:
